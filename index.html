@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Registration Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ══════════════════════ NAV ══════════════════════ -->
+<header class="nav">
+  <div class="nav__brand">
+    <div class="nav__logo">SR</div>
+    <div>
+      <p class="nav__title">Student Registry</p>
+      <p class="nav__sub">Registration &amp; Analytics</p>
+    </div>
+  </div>
+  <div class="nav__right">
+    <nav class="nav__tabs">
+      <button class="tab-btn tab-btn--active" data-tab="form">📋 Register</button>
+      <button class="tab-btn" data-tab="dashboard">📊 Dashboard</button>
+      <button class="tab-btn" data-tab="table">📁 Records</button>
+    </nav>
+    <button id="themeBtn" class="icon-btn" title="Toggle theme">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- ══════════════════════ SECTION: REGISTER ══════════════════════ -->
+  <section id="tab-form" class="tab-section tab-section--active">
+
+    <div class="section-head">
+      <p class="eyebrow">All fields required · Age auto-calculated</p>
+      <h1 class="section-head__title">New Student Registration</h1>
+    </div>
+
+    <div class="card form-card">
+      <div class="card__header">
+        <h2 id="formHeading">Register Student</h2>
+        <span class="edit-badge" id="editBadge" hidden>✏️ Editing record</span>
+      </div>
+
+      <form id="regForm" novalidate autocomplete="off">
+        <input type="hidden" id="editId" />
+
+        <div class="form-grid">
+
+          <!-- First Name -->
+          <div class="field">
+            <label for="fName">First Name</label>
+            <input type="text" id="fName" placeholder="e.g. Ranjith" />
+            <span class="err" id="err-fName"></span>
+          </div>
+
+          <!-- Last Name -->
+          <div class="field">
+            <label for="lName">Last Name</label>
+            <input type="text" id="lName" placeholder="e.g. Kumar" />
+            <span class="err" id="err-lName"></span>
+          </div>
+
+          <!-- Date of Birth -->
+          <div class="field">
+            <label for="dob">Date of Birth</label>
+            <input type="date" id="dob" />
+            <span class="err" id="err-dob"></span>
+          </div>
+
+          <!-- Age (auto) -->
+          <div class="field">
+            <label for="ageDisplay">Age (auto-calculated)</label>
+            <input type="text" id="ageDisplay" placeholder="—" readonly class="readonly-field" tabindex="-1" />
+            <span class="err" id="err-age"></span>
+          </div>
+
+          <!-- Sex -->
+          <div class="field">
+            <label>Sex</label>
+            <div class="radio-row">
+              <label class="rpill"><input type="radio" name="sex" value="Male" /> Male</label>
+              <label class="rpill"><input type="radio" name="sex" value="Female" /> Female</label>
+            </div>
+            <span class="err" id="err-sex"></span>
+          </div>
+
+          <!-- Degree -->
+          <div class="field">
+            <label for="degree">Degree</label>
+            <select id="degree">
+              <option value="">Select degree</option>
+              <option>B.E</option>
+              <option>B.Tech</option>
+              <option>B.Sc</option>
+              <option>B.Com</option>
+              <option>BCA</option>
+              <option>MCA</option>
+              <option>MBA</option>
+              <option>M.Tech</option>
+              <option>M.Sc</option>
+            </select>
+            <span class="err" id="err-degree"></span>
+          </div>
+
+          <!-- City -->
+          <div class="field">
+            <label for="city">City</label>
+            <select id="city">
+              <option value="">Select city</option>
+              <option>Chennai</option>
+              <option>Coimbatore</option>
+              <option>Madurai</option>
+              <option>Trichy</option>
+              <option>Salem</option>
+              <option>Tirunelveli</option>
+              <option>Erode</option>
+              <option>Vellore</option>
+              <option>Other</option>
+            </select>
+            <span class="err" id="err-city"></span>
+          </div>
+
+        </div><!-- /form-grid -->
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="submitBtn">Register Student</button>
+          <button type="button" class="btn btn-ghost" id="cancelBtn">Reset</button>
+        </div>
+
+      </form>
+    </div><!-- /card -->
+
+  </section>
+
+  <!-- ══════════════════════ SECTION: DASHBOARD ══════════════════════ -->
+  <section id="tab-dashboard" class="tab-section">
+
+    <div class="section-head">
+      <p class="eyebrow">Live · Updates on every registration, edit, or delete</p>
+      <h1 class="section-head__title">Analytics Dashboard</h1>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-row" id="summaryRow">
+      <div class="scard scard--purple">
+        <div class="scard__icon">🎓</div>
+        <div class="scard__body">
+          <p class="scard__val" id="s-total">0</p>
+          <p class="scard__label">Total Students</p>
+        </div>
+      </div>
+      <div class="scard scard--blue">
+        <div class="scard__icon">♂</div>
+        <div class="scard__body">
+          <p class="scard__val" id="s-male">0</p>
+          <p class="scard__label">Male Students</p>
+        </div>
+      </div>
+      <div class="scard scard--rose">
+        <div class="scard__icon">♀</div>
+        <div class="scard__body">
+          <p class="scard__val" id="s-female">0</p>
+          <p class="scard__label">Female Students</p>
+        </div>
+      </div>
+      <div class="scard scard--amber">
+        <div class="scard__icon">📅</div>
+        <div class="scard__body">
+          <p class="scard__val" id="s-avg">—</p>
+          <p class="scard__label">Average Age</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Filters -->
+    <div class="card filter-card">
+      <p class="filter-label">Filter Charts By</p>
+      <div class="filter-row">
+        <div class="field field--sm">
+          <label for="flt-degree">Degree</label>
+          <select id="flt-degree"><option value="">All</option></select>
+        </div>
+        <div class="field field--sm">
+          <label for="flt-city">City</label>
+          <select id="flt-city"><option value="">All</option></select>
+        </div>
+        <div class="field field--sm">
+          <label for="flt-gender">Gender</label>
+          <select id="flt-gender">
+            <option value="">All</option>
+            <option>Male</option>
+            <option>Female</option>
+          </select>
+        </div>
+        <div class="field field--sm">
+          <label for="flt-age">Age Category</label>
+          <select id="flt-age">
+            <option value="">All</option>
+            <option value="20-25">20–25 Years</option>
+            <option value="25-30">25–30 Years</option>
+            <option value="30+">Above 30</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost btn--xs" id="clearFiltersBtn">Clear Filters</button>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="charts-grid">
+
+      <div class="card chart-card">
+        <div class="card__header"><h2>Gender Distribution</h2></div>
+        <div class="chart-wrap"><canvas id="genderChart"></canvas></div>
+      </div>
+
+      <div class="card chart-card">
+        <div class="card__header"><h2>Degree-wise Students</h2></div>
+        <div class="chart-wrap"><canvas id="degreeChart"></canvas></div>
+      </div>
+
+      <div class="card chart-card">
+        <div class="card__header"><h2>City-wise Students</h2></div>
+        <div class="chart-wrap"><canvas id="cityChart"></canvas></div>
+      </div>
+
+      <div class="card chart-card">
+        <div class="card__header"><h2>Age Categories</h2></div>
+        <div class="chart-wrap"><canvas id="ageChart"></canvas></div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ══════════════════════ SECTION: RECORDS TABLE ══════════════════════ -->
+  <section id="tab-table" class="tab-section">
+
+    <div class="section-head">
+      <p class="eyebrow">Stored in Local Storage · Persists after page refresh</p>
+      <h1 class="section-head__title">Student Records</h1>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="card toolbar-card">
+      <div class="toolbar">
+        <div class="field field--sm toolbar__search">
+          <label for="searchBox">Search</label>
+          <input type="text" id="searchBox" placeholder="Name, Degree, or City…" />
+        </div>
+        <div class="field field--sm">
+          <label for="sortField">Sort by</label>
+          <select id="sortField">
+            <option value="">Default</option>
+            <option value="fName">First Name</option>
+            <option value="age">Age</option>
+            <option value="degree">Degree</option>
+            <option value="city">City</option>
+          </select>
+        </div>
+        <div class="field field--sm">
+          <label for="sortDir">Order</label>
+          <select id="sortDir">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </div>
+        <div class="toolbar__spacer"></div>
+        <span class="rec-count" id="recCount">0 records</span>
+        <button class="btn btn-ghost btn--xs" id="exportBtn">Export CSV</button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card table-card">
+      <div class="table-scroll">
+        <table id="studentTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Age</th>
+              <th>Sex</th>
+              <th>Degree</th>
+              <th>City</th>
+              <th>Date Registered</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <p class="empty-msg" id="emptyMsg">No students registered yet.</p>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>Student Registration Dashboard · HTML5, CSS3, Vanilla JS, Chart.js · Data stored in Local Storage</p>
+</footer>
+
+<div id="toast" class="toast" role="status"></div>
+
+<script src="script.js"></script>
+<script src="charts.js"></script>
+
+</body>
+</html>
